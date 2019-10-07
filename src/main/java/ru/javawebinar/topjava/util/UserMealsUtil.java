@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.util;
 
+import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.model.UserMeal;
 import ru.javawebinar.topjava.model.UserMealWithExceed;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -21,7 +22,7 @@ public class UserMealsUtil {
 
     private static Map<LocalDate, Integer> caloriesSumByDay = new ConcurrentHashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         List<UserMeal> mealList = Arrays.asList(
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
                 new UserMeal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
@@ -34,7 +35,42 @@ public class UserMealsUtil {
         System.out.println(getFilteredWithExceededCollectorInterface(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
         System.out.println(getFilteredWithExceededCollectorOf(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
         System.out.println(getFilteredWithExceededRecursion(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        System.out.println(getFilteredWithExceededClosure(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        System.out.println(getFilteredWithExceededFuture(mealList, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
 
+    }
+
+    public static List<UserMealWithExceed> getFilteredWithExceededFuture(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) throws InterruptedException, ExecutionException {
+        final Map<LocalDate, Integer> byDay = new HashMap<>();
+        final List<Callable<UserMealWithExceed>> task = new ArrayList<>();
+        mealList.forEach(m -> {
+            byDay.merge(m.getDate(), m.getCalories(), Integer::sum);
+            if (TimeUtil.isBetween(m.getTime(), startTime, endTime)) {
+                task.add(() -> new UserMealWithExceed(
+                        m.getDateTime(),
+                        m.getDescription(),
+                        m.getCalories(),
+                        byDay.get(m.getDate()) > caloriesPerDay));
+            }
+        });
+        List<UserMealWithExceed> meals = new ArrayList<>();
+        List<Future<UserMealWithExceed>> futures = Executors.newFixedThreadPool(4).invokeAll(task);
+        for (Future<UserMealWithExceed> f : futures) {
+            meals.add(f.get());
+        }
+        return meals;
+    }
+
+    public static List<MealTo> getFilteredWithExceededClosure(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        final Map<LocalDate, Integer> byDay = new HashMap<>();
+        final List<MealTo> meals = new ArrayList<>();
+        mealList.forEach(m -> {
+            byDay.merge(m.getDate(), m.getCalories(), Integer::sum);
+            if (TimeUtil.isBetween(m.getTime(), startTime, endTime))
+                meals.add(toMealTo(m, () -> byDay.get(m.getDate()) > caloriesPerDay));
+        });
+
+        return meals;
     }
 
     public static List<UserMealWithExceed> getFilteredWithExceededRecursion(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -59,6 +95,15 @@ public class UserMealsUtil {
                 meal.getDescription(),
                 meal.getCalories(),
                 caloriesSumByDay.get(meal.getDate()) > caloriesPerDay
+        );
+    }
+
+    private static MealTo toMealTo(UserMeal meal, Supplier<Boolean> exceed) {
+        return new MealTo(
+                meal.getDateTime(),
+                meal.getDescription(),
+                meal.getCalories(),
+                exceed
         );
     }
 
