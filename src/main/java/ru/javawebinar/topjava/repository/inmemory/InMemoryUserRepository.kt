@@ -49,7 +49,7 @@ class InMemoryUserRepository : UserRepository {
 
     override fun getAll(): List<User> = repo.run {
         log.info("getAll")
-        values.sortedBy { it.name }
+        values.sortedWith(compareBy({ it.name }, {it.email}))
     }
 
     override fun getByEmail(email: String): User? {

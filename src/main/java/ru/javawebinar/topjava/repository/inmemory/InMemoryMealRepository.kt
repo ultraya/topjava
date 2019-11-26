@@ -26,7 +26,7 @@ class InMemoryMealRepository : MealRepository {
         if (meal.isNew) {
             meal.id = counter.incrementAndGet()
             repository.computeIfAbsent(userId) {
-                hashMapOf()
+                ConcurrentHashMap()
             }[meal.id] = meal
 
             return meal
@@ -38,7 +38,7 @@ class InMemoryMealRepository : MealRepository {
     }
 
     override fun delete(userId: Int, mealId: Int): Boolean {
-        return repository[userId]?.remove(mealId) != null
+        return repository[userId] != null && repository[userId]?.remove(mealId) != null
     }
 
     override fun get(userId: Int, mealId: Int): Meal? {
