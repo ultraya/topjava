@@ -9,6 +9,8 @@ import ru.javawebinar.topjava.util.UsersUtil
 @Repository
 class InMemoryUserRepository : UserRepository {
 
+    private val repo = InMemoryBaseRepository<User>()
+
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")  //In fact, IntelliJ IDEA marks the declaration of the logger with a warning, because it recognizes that the reference to javaClass in a companion object probably isn't what we want.
         @JvmStatic  //converts companion objects to static fields in JVM
@@ -20,8 +22,6 @@ class InMemoryUserRepository : UserRepository {
         save(UsersUtil.USER_2)
         save(UsersUtil.ADMIN)
     }
-
-    private val repo = InMemoryBaseRepository<User>()
 
     override fun save(user: User): User? {
         log.info("save {}", user)

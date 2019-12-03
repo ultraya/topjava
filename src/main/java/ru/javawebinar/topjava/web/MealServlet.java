@@ -6,6 +6,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -51,10 +52,10 @@ public class MealServlet extends HttpServlet {
             String startTime = request.getParameter("startTime");
             String endTime = request.getParameter("endTime");
             List<MealTo> all = mealController.getFiltered(
-                    startDate != null && !startDate.isEmpty() ? LocalDate.parse(startDate) : null,
-                    endDate != null && !endDate.isEmpty() ? LocalDate.parse(endDate) : null,
-                    startTime != null && !startTime.isEmpty() ? LocalTime.parse(startTime) : null,
-                    endTime != null && !endTime.isEmpty() ? LocalTime.parse(endTime) : null
+                    DateTimeUtil.parseToLocalDate(startDate),
+                    DateTimeUtil.parseToLocalDate(endDate),
+                    DateTimeUtil.parseToLocalTime(startTime),
+                    DateTimeUtil.parseToLocalTime(endTime)
             );
             request.setAttribute("meals", all);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
