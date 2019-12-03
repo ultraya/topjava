@@ -13,8 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @Repository
 class InMemoryMealRepository : MealRepository {
-    private val repository = ConcurrentHashMap<Int, MutableMap<Int, Meal>>()
-    private val counter = AtomicInteger(0)
+    private val repository = ConcurrentHashMap<Int, InMemoryBaseRepository<Meal>>()
 
     init {
         listOf(USER_ID_1, USER_ID_2).forEach { user ->
@@ -22,41 +21,32 @@ class InMemoryMealRepository : MealRepository {
         }
     }
 
-    override fun save(userId: Int, meal: Meal): Meal? {
-        if (meal.isNew) {
-            meal.id = counter.incrementAndGet()
+    override fun save(userId: Int, meal: Meal): Meal? =
             repository.computeIfAbsent(userId) {
-                ConcurrentHashMap()
-            }[meal.id] = meal
-
-            return meal
-        }
-        // treat case: update, but not present in storage
-        return repository[userId]?.computeIfPresent(meal.id) { _, _ ->
-            meal
-        }
-    }
+                InMemoryBaseRepository()
+            }.save(meal)
 
     override fun delete(userId: Int, mealId: Int): Boolean {
-        return repository[userId] != null && repository[userId]?.remove(mealId) != null
+        return repository[userId] != null && repository[userId]!!.delete(mealId)
     }
 
     override fun get(userId: Int, mealId: Int): Meal? {
         return repository[userId]?.get(mealId)
     }
 
-    override fun getAll(userId: Int) = getFiltered(userId) { true }
+    override fun getAll(userId: Int) =
+            getWithFilter(userId) {
+                true
+            }
 
     override fun getBetween(userId: Int, start: LocalDate, end: LocalDate) =
-            getFiltered(userId) {
+            getWithFilter(userId) {
                 DateTimeUtil.isBetween(it.date, start, end)
             }
 
-    private fun getFiltered(userId: Int, filter: (Meal) -> Boolean): Collection<Meal> {
-        return repository.getOrDefault(userId, hashMapOf()).values
-                .filter { filter(it) }
-                .sortedByDescending {
-                    it.dateTime
-                }
-    }
+    private fun getWithFilter(id: Int, filter: (Meal) -> Boolean): Collection<Meal> =
+            repository[id]?.getFiltered(
+                    filter,
+                    compareBy { it.dateTime }
+            ) ?: listOf()
 }

@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository
 import ru.javawebinar.topjava.model.User
 import ru.javawebinar.topjava.repository.UserRepository
 import ru.javawebinar.topjava.util.UsersUtil
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 
 @Repository
 class InMemoryUserRepository : UserRepository {
@@ -17,45 +15,41 @@ class InMemoryUserRepository : UserRepository {
         private val log = getLogger(javaClass.enclosingClass) //enclosingClass refers to the outer class
     }
 
-    private val repo: MutableMap<Int, User> = ConcurrentHashMap()
-    private val key = AtomicInteger(0)
-
     init {
         save(UsersUtil.USER_1)
         save(UsersUtil.USER_2)
         save(UsersUtil.ADMIN)
     }
 
-    override fun delete(id: Int): Boolean {
-        log.info("delete {}", id)
-        return repo.remove(id) != null
-    }
+    private val repo = InMemoryBaseRepository<User>()
 
     override fun save(user: User): User? {
         log.info("save {}", user)
-        if (user.isNew) {
-            user.id = key.incrementAndGet()
-            repo.put(user.id, user)
-            return user
-        }
-
-        return repo.computeIfPresent(user.id) { _, _ -> user }
+        return repo.save(user)
     }
 
     override fun get(id: Int): User? {
         log.info("get {}", id)
-        return repo[id]
+        return repo.get(id)
     }
 
-    override fun getAll(): List<User> = repo.run {
+    override fun delete(id: Int): Boolean {
+        log.info("delete {}", id)
+        return repo.delete(id)
+    }
+
+    override fun getAll(): List<User> {
         log.info("getAll")
-        values.sortedWith(compareBy({ it.name }, {it.email}))
+        return repo.getFiltered(
+                { true },
+                compareBy({ it.name }, { it.email })
+        )
     }
 
     override fun getByEmail(email: String): User? {
         log.info("getByEmail {}", email)
-        return repo.values.firstOrNull {
+        return repo.getFiltered {
             it.email == email
-        }
+        }.firstOrNull()
     }
 }
