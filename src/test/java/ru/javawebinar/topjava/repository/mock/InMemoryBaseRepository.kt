@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.repository.inmemory
+package ru.javawebinar.topjava.repository.mock
 
 import ru.javawebinar.topjava.model.AbstractBaseEntity
 import java.util.concurrent.ConcurrentHashMap

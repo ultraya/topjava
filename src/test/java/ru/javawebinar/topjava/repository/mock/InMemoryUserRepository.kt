@@ -1,15 +1,16 @@
-package ru.javawebinar.topjava.repository.inmemory
+package ru.javawebinar.topjava.repository.mock
 
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Repository
+import ru.javawebinar.topjava.UserTestData.ADMIN
+import ru.javawebinar.topjava.UserTestData.USER
 import ru.javawebinar.topjava.model.User
 import ru.javawebinar.topjava.repository.UserRepository
-import ru.javawebinar.topjava.util.UsersUtil
 
 @Repository
 class InMemoryUserRepository : UserRepository {
 
-    private val repo = InMemoryBaseRepository<User>()
+    private lateinit var repo: InMemoryBaseRepository<User>
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")  //In fact, IntelliJ IDEA marks the declaration of the logger with a warning, because it recognizes that the reference to javaClass in a companion object probably isn't what we want.
@@ -17,10 +18,10 @@ class InMemoryUserRepository : UserRepository {
         private val log = getLogger(javaClass.enclosingClass) //enclosingClass refers to the outer class
     }
 
-    init {
-        save(UsersUtil.USER_1)
-        save(UsersUtil.USER_2)
-        save(UsersUtil.ADMIN)
+    fun init() {
+        repo = InMemoryBaseRepository()
+        save(USER)
+        save(ADMIN)
     }
 
     override fun save(user: User): User? {
