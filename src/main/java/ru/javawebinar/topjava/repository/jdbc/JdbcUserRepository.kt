@@ -1,11 +1,9 @@
 package ru.javawebinar.topjava.repository.jdbc
 
-import org.intellij.lang.annotations.Language
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.jdbc.core.queryForList
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
 import ru.javawebinar.topjava.model.User
