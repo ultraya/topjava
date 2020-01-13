@@ -1,16 +1,16 @@
 package ru.javawebinar.topjava.repository.mock
 
 import org.springframework.stereotype.Repository
+import ru.javawebinar.topjava.ADMIN_ID
 import ru.javawebinar.topjava.MEALS
-import ru.javawebinar.topjava.UserTestData.ADMIN_ID
-import ru.javawebinar.topjava.UserTestData.USER_ID
+import ru.javawebinar.topjava.USER_ID
 import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.repository.MealRepository
 import ru.javawebinar.topjava.util.DateTimeUtil
 import java.time.LocalDate
 import java.util.concurrent.ConcurrentHashMap
 
-@Repository
+@Repository("mockMealRepository")
 class InMemoryMealRepository : MealRepository {
     private lateinit var repository: ConcurrentHashMap<Int, InMemoryBaseRepository<Meal>>
 

@@ -6,11 +6,11 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class InMemoryBaseRepository<T : AbstractBaseEntity> {
     private val map: MutableMap<Int, T> = ConcurrentHashMap()
-    private val counter: AtomicInteger = AtomicInteger(0)
+    private val counter: AtomicInteger = AtomicInteger(AbstractBaseEntity.START_SEQ)
 
     fun save(entry: T): T? = entry.run {
         if (isNew) {
-            id = counter.incrementAndGet()
+            id = counter.getAndIncrement()
             map[id] = this
             return@run this
         }

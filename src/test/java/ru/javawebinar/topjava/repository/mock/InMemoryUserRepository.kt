@@ -2,12 +2,12 @@ package ru.javawebinar.topjava.repository.mock
 
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Repository
-import ru.javawebinar.topjava.UserTestData.ADMIN
-import ru.javawebinar.topjava.UserTestData.USER
+import ru.javawebinar.topjava.ADMIN
+import ru.javawebinar.topjava.USER
 import ru.javawebinar.topjava.model.User
 import ru.javawebinar.topjava.repository.UserRepository
 
-@Repository
+@Repository("mockUserRepository")
 class InMemoryUserRepository : UserRepository {
 
     private lateinit var repo: InMemoryBaseRepository<User>
@@ -35,7 +35,6 @@ class InMemoryUserRepository : UserRepository {
     }
 
     override fun delete(id: Int): Boolean {
-        log.info("delete {}", id)
         return repo.delete(id)
     }
 
