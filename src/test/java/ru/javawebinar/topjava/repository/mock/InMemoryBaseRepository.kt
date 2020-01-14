@@ -4,8 +4,8 @@ import ru.javawebinar.topjava.model.AbstractBaseEntity
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-class InMemoryBaseRepository<T : AbstractBaseEntity> {
-    private val map: MutableMap<Int, T> = ConcurrentHashMap()
+open class InMemoryBaseRepository<T : AbstractBaseEntity> {
+    val map: MutableMap<Int, T> = ConcurrentHashMap()
     private val counter: AtomicInteger = AtomicInteger(AbstractBaseEntity.START_SEQ)
 
     fun save(entry: T): T? = entry.run {
@@ -23,10 +23,6 @@ class InMemoryBaseRepository<T : AbstractBaseEntity> {
 
     fun get(id: Int): T? = map[id]
 
-    fun getFiltered(filter: (T) -> Boolean, comparator: Comparator<in T>) =
-            map.values.filter(filter).sortedWith(comparator)
-
-    fun getFiltered(filter: (T) -> Boolean) =
-            map.values.filter(filter)
+    fun getCollection() = map.values
 
 }

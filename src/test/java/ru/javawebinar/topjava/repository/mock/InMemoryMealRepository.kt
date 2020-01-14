@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap
 class InMemoryMealRepository : MealRepository {
     private lateinit var repository: ConcurrentHashMap<Int, InMemoryBaseRepository<Meal>>
 
-
     fun init() {
         repository = ConcurrentHashMap()
         listOf(USER_ID, ADMIN_ID).forEach { user ->
@@ -35,19 +34,15 @@ class InMemoryMealRepository : MealRepository {
         return repository[userId]?.get(mealId)
     }
 
-    override fun getAll(userId: Int) =
-            getWithFilter(userId) {
-                true
-            }
+    override fun getAll(userId: Int) = getWithFilter(userId)
 
     override fun getBetween(userId: Int, start: LocalDate, end: LocalDate) =
             getWithFilter(userId) {
                 DateTimeUtil.isBetween(it.date, start, end)
             }
 
-    private fun getWithFilter(id: Int, filter: (Meal) -> Boolean): Collection<Meal> =
-            repository[id]?.getFiltered(
-                    filter,
-                    compareBy { it.dateTime }
-            ) ?: listOf()
+    private fun getWithFilter(id: Int, filter: (Meal) -> Boolean = { true }): Collection<Meal> =
+            repository[id]?.let {
+                it.getCollection().filter(filter).sortedWith(compareBy { it.dateTime })
+            } ?: listOf()
 }

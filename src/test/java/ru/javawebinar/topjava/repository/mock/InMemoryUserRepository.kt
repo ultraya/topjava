@@ -3,14 +3,14 @@ package ru.javawebinar.topjava.repository.mock
 import org.slf4j.LoggerFactory.getLogger
 import org.springframework.stereotype.Repository
 import ru.javawebinar.topjava.ADMIN
+import ru.javawebinar.topjava.ADMIN_ID
 import ru.javawebinar.topjava.USER
+import ru.javawebinar.topjava.USER_ID
 import ru.javawebinar.topjava.model.User
 import ru.javawebinar.topjava.repository.UserRepository
 
 @Repository("mockUserRepository")
-class InMemoryUserRepository : UserRepository {
-
-    private lateinit var repo: InMemoryBaseRepository<User>
+class InMemoryUserRepository : InMemoryBaseRepository<User>(), UserRepository {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")  //In fact, IntelliJ IDEA marks the declaration of the logger with a warning, because it recognizes that the reference to javaClass in a companion object probably isn't what we want.
@@ -19,37 +19,21 @@ class InMemoryUserRepository : UserRepository {
     }
 
     fun init() {
-        repo = InMemoryBaseRepository()
-        save(USER)
-        save(ADMIN)
+        map.clear()
+        map[USER_ID] = USER
+        map[ADMIN_ID] = ADMIN
     }
 
-    override fun save(user: User): User? {
-        log.info("save {}", user)
-        return repo.save(user)
-    }
+    override fun getAll(): List<User> =
+            getCollection().sortedWith(
+                    compareBy(
+                            { it.name },
+                            { it.email }
+                    ))
 
-    override fun get(id: Int): User? {
-        log.info("get {}", id)
-        return repo.get(id)
-    }
+    override fun getByEmail(email: String): User? =
+            getCollection().firstOrNull {
+                it.email == email
+            }
 
-    override fun delete(id: Int): Boolean {
-        return repo.delete(id)
-    }
-
-    override fun getAll(): List<User> {
-        log.info("getAll")
-        return repo.getFiltered(
-                { true },
-                compareBy({ it.name }, { it.email })
-        )
-    }
-
-    override fun getByEmail(email: String): User? {
-        log.info("getByEmail {}", email)
-        return repo.getFiltered {
-            it.email == email
-        }.firstOrNull()
-    }
 }
