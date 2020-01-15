@@ -17,7 +17,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException
 
 @RunWith(SpringRunner::class)
 @ContextConfiguration(classes = [CoreConfig::class, MockConfig::class])  //https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles
-class InMemoryAdminRestControllerTest {
+class InMemoryAdminRestControllerSpringTest {
 
     @Autowired
     private lateinit var controller: AdminRestController
