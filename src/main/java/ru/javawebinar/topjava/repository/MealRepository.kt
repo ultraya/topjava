@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.repository
 
 import ru.javawebinar.topjava.model.Meal
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface MealRepository {
     // null if not found, when updated
@@ -15,5 +16,5 @@ interface MealRepository {
 
     fun getAll(userId: Int): Collection<Meal>
 
-    fun getBetween(userId: Int, start: LocalDate, end: LocalDate): Collection<Meal>
+    fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): Collection<Meal>
 }

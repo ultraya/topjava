@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller
 import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.service.MealService
 import ru.javawebinar.topjava.to.MealTo
+import ru.javawebinar.topjava.util.DateTimeUtil
 import ru.javawebinar.topjava.util.MealsUtil
 import ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent
 import ru.javawebinar.topjava.util.ValidationUtil.checkNew
@@ -55,7 +56,10 @@ class MealRestController(
     fun getFiltered(startDate: LocalDate?, endDate: LocalDate?, startTime: LocalTime?, endTime: LocalTime?): List<MealTo> {
         log.info("getFiltered")
         return MealsUtil.getFilteredTos(
-                service.getFilteredByDate(SecurityUtil.authUserId(), startDate, endDate),
+                service.getFilteredByDate(
+                        SecurityUtil.authUserId(),
+                        startDate ?: DateTimeUtil.DATE_MIN,
+                        endDate ?: DateTimeUtil.DATE_MAX),
                 SecurityUtil.authUserCaloriesPerDay(),
                 startTime ?: LocalTime.MIN,
                 endTime ?: LocalTime.MAX

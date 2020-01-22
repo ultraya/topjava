@@ -7,6 +7,8 @@ import ru.javawebinar.topjava.util.DateTimeUtil
 import ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId
 import ru.javawebinar.topjava.util.exception.NotFoundException
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class MealService(
@@ -25,6 +27,6 @@ class MealService(
 
     fun getAll(userId: Int) = repository.getAll(userId)
 
-    fun getFilteredByDate(userId: Int, start: LocalDate? = null, end: LocalDate? = null) =
-            repository.getBetween(userId, start ?: DateTimeUtil.DATE_MIN, end ?: DateTimeUtil.DATE_MAX)
+    fun getFilteredByDate(userId: Int, start: LocalDate, end: LocalDate) =
+            repository.getBetween(userId, LocalDateTime.of(start, LocalTime.MIN), LocalDateTime.of(end, LocalTime.MAX))
 }

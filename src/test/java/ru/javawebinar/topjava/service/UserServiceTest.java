@@ -26,7 +26,7 @@ import static ru.javawebinar.topjava.UserTestDataKt.*;
         DaoConfig.class
 })
 @RunWith(SpringRunner.class)
-@Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
+@Sql(scripts = {"classpath:db/initDB.sql", "classpath:db/populateDB.sql"}, config = @SqlConfig(encoding = "UTF-8"))
 public class UserServiceTest {
 
     static {

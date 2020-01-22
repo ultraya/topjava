@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.repository.MealRepository
 import ru.javawebinar.topjava.util.DateTimeUtil
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 
 @Repository("mockMealRepository")
@@ -36,9 +37,9 @@ class InMemoryMealRepository : MealRepository {
 
     override fun getAll(userId: Int) = getWithFilter(userId)
 
-    override fun getBetween(userId: Int, start: LocalDate, end: LocalDate) =
+    override fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime) =
             getWithFilter(userId) {
-                DateTimeUtil.isBetween(it.date, start, end)
+                DateTimeUtil.isBetween(it.dateTime, start, end)
             }
 
     private fun getWithFilter(id: Int, filter: (Meal) -> Boolean = { true }): Collection<Meal> =
