@@ -23,4 +23,9 @@
     <bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="jdbcTemplate"/>
     </bean>
+
+    <!-- log postgres -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean">
+        <property name="staticMethod" value="org.slf4j.bridge.SLF4JBridgeHandler.install" />
+    </bean>
 </beans>

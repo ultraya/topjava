@@ -24,11 +24,12 @@ class MealServiceTest {
     private lateinit var mealService: MealService
 
     companion object {
-        init {
-            // let java.util.logging log to slf4j
-            SLF4JBridgeHandler.removeHandlersForRootLogger()
-            SLF4JBridgeHandler.install()
-        }
+        //replace to Configuration class https://stackoverflow.com/questions/27296276
+//        init {
+//            // let java.util.logging log to slf4j
+//            SLF4JBridgeHandler.removeHandlersForRootLogger()
+//            SLF4JBridgeHandler.install()
+//        }
 
         val NOT_EXISTS_MEAL_ID = 10
     }
