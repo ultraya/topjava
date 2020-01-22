@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.junit.*;
+import org.slf4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.UserTestDataKt;
@@ -11,15 +12,20 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.slf4j.LoggerFactory.getLogger;
+import static ru.javawebinar.topjava.UserTestDataKt.ADMIN;
+
 
 public class InMemoryAdminRestControllerTest {
+    private static final Logger log = getLogger(InMemoryAdminRestControllerTest.class);
+
     private static ConfigurableApplicationContext appCtx;
     private static AdminRestController controller;
 
     @BeforeClass
     public static void beforeClass() {
         appCtx = new ClassPathXmlApplicationContext("spring/spring-app-test.xml");
-        System.out.println("\n" + Arrays.toString(appCtx.getBeanDefinitionNames()) + "\n");
+        log.info("\n{}\n", Arrays.toString(appCtx.getBeanDefinitionNames()));
         controller = appCtx.getBean(AdminRestController.class);
     }
 
@@ -39,8 +45,8 @@ public class InMemoryAdminRestControllerTest {
     public void delete() throws Exception {
         controller.delete(UserTestDataKt.USER_ID);
         Collection<User> users = controller.getAll();
-        Assert.assertEquals(users.size(), 1);
-        Assert.assertEquals(users.iterator().next(), UserTestDataKt.ADMIN);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals(ADMIN, users.iterator().next());
     }
 
     @Test(expected = NotFoundException.class)

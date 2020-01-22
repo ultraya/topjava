@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.jdbc
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 import org.springframework.stereotype.Repository
@@ -32,14 +33,7 @@ class JdbcUserRepository : UserRepository {
     }
 
     override fun save(user: User): User? {
-        val param = mapOf(
-                "id" to user.id,
-                "name" to user.name,
-                "email" to user.email,
-                "password" to user.password,
-                "registered" to user.registered,
-                "enabled" to user.isEnabled,
-                "calories_per_day" to user.caloriesPerDay)
+        val param = BeanPropertySqlParameterSource(user)  // all field have, but meal don't user_id (use custom map)
 
         if (user.isNew) {
             user.id = simpleJdbcInsert.executeAndReturnKey(param).toInt()
@@ -51,7 +45,7 @@ class JdbcUserRepository : UserRepository {
                             password=:password,
                             registered=:registered,
                             enabled=:enabled,
-                            calories_per_day=:calories_per_day
+                            calories_per_day=:caloriesPerDay
                             WHERE id=:id
                             """, param
                     ) == 0)

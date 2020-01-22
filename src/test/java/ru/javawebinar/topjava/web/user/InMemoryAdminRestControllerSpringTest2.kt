@@ -35,8 +35,8 @@ class InMemoryAdminRestControllerSpringTest2 {
     fun delete() {
         controller.delete(USER_ID)
         val users = controller.all
-        Assert.assertEquals(users.size, 1)
-        Assert.assertEquals(users.iterator().next(), ADMIN)
+        Assert.assertEquals(1, users.size)
+        Assert.assertEquals(ADMIN, users.iterator().next())
     }
 
     @Test(expected = NotFoundException::class)
