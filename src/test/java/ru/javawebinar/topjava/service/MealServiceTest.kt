@@ -58,6 +58,13 @@ class MealServiceTest {
         }
     }
 
+    @Test(expected = NotFoundException::class)
+    fun updateNotOwn() {
+        with(mealService) {
+            update(ADMIN_ID, getUpdated())
+        }
+    }
+
     @Test
     fun delete() {
         with(mealService) {
@@ -71,6 +78,11 @@ class MealServiceTest {
         mealService.delete(USER_ID, NOT_EXISTS_MEAL_ID)
     }
 
+    @Test(expected = NotFoundException::class)
+    fun deleteNotOwn() {
+        mealService.delete(ADMIN_ID, MEAL_ID1)
+    }
+
     @Test
     fun get() {
         with(mealService) {
@@ -82,6 +94,11 @@ class MealServiceTest {
     @Test(expected = NotFoundException::class)
     fun getNotFound() {
         mealService.get(USER_ID, NOT_EXISTS_MEAL_ID)
+    }
+
+    @Test(expected = NotFoundException::class)
+    fun getNotOwn() {
+        mealService.get(ADMIN_ID, MEAL_ID1)
     }
 
     @Test
