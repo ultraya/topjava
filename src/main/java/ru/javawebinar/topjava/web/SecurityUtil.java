@@ -7,6 +7,9 @@ public class SecurityUtil {
 
     private static int loggedUser = START_SEQ;
 
+    private SecurityUtil() {
+    }
+
     public static int authUserId() {
         return loggedUser;
     }
