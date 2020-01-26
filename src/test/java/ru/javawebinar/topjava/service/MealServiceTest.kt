@@ -17,7 +17,7 @@ import java.time.Month
 
 @RunWith(SpringRunner::class)
 @ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
-@Sql(value = ["classpath:db/initDB.sql", "classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
+@Sql(value = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
 class MealServiceTest {
 
     @Autowired

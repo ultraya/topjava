@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
+import org.springframework.core.io.ClassPathResource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.jdbc.datasource.init.DataSourceInitializer
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
 import javax.sql.DataSource
 
 //allopen fix
@@ -35,4 +38,19 @@ class DaoConfig {
 
     @Bean
     fun namedParameterJdbcTemplate(dataSource: HikariDataSource) = NamedParameterJdbcTemplate(dataSource)
+
+    @Bean
+    fun dbInit(dataSource: HikariDataSource) = DataSourceInitializer().apply {
+        setDataSource(dataSource)
+        setEnabled(true)
+        setDatabasePopulator(
+                ResourceDatabasePopulator().apply {
+                    addScripts(
+                            ClassPathResource("/db/initDB.sql")
+                          //  ClassPathResource("/db/populateDB.sql")
+                    )
+                    setSqlScriptEncoding("utf-8")
+                }
+        )
+    }
 }
