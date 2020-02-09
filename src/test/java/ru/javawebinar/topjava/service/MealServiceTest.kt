@@ -15,6 +15,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException
 import java.time.LocalDate
 import java.time.Month
 
+//https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles
 @RunWith(SpringRunner::class)
 @ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
 @Sql(value = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))

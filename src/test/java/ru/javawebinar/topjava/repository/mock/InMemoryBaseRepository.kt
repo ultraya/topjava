@@ -11,10 +11,10 @@ open class InMemoryBaseRepository<T : AbstractBaseEntity> {
     fun save(entry: T): T? = entry.run {
         if (isNew) {
             id = counter.getAndIncrement()
-            map[id] = this
+            map[id!!] = this
             return@run this
         }
-        map.computeIfPresent(id) { _, _ ->
+        map.computeIfPresent(id!!) { _, _ ->
             this
         }
     }

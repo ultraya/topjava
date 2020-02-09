@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava
 
 import org.assertj.core.api.Assertions.assertThat
-import ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ
+import ru.javawebinar.topjava.model.AbstractBaseEntity.Companion.START_SEQ
 import ru.javawebinar.topjava.model.Role
 import ru.javawebinar.topjava.model.User
 

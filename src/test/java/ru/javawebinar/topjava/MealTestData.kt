@@ -1,11 +1,9 @@
 package ru.javawebinar.topjava
 
 import org.assertj.core.api.Assertions
-import ru.javawebinar.topjava.model.AbstractBaseEntity.*
+import ru.javawebinar.topjava.model.AbstractBaseEntity.Companion.START_SEQ
 import ru.javawebinar.topjava.model.Meal
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.Month
 
 @JvmField
@@ -40,7 +38,7 @@ fun getCreated() = Meal(
 fun getUpdated() = Meal(MEAL_ID1, MEAL1.dateTime, "updated", 200)
 
 fun assertMatch(actual: Meal, expected: Meal) {
-    Assertions.assertThat(actual).isEqualToComparingFieldByField(expected)
+    Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected,"user")
 }
 
 fun assertMatch(actual: Iterable<Meal>, meal: Meal, vararg meals: Meal) {
@@ -48,5 +46,5 @@ fun assertMatch(actual: Iterable<Meal>, meal: Meal, vararg meals: Meal) {
 }
 
 fun assertMatch(actual: Iterable<Meal>, expected: Iterable<Meal>) {
-    Assertions.assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected)
+    Assertions.assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected)
 }

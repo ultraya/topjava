@@ -42,7 +42,7 @@ class InMemoryMealRepository : MealRepository {
                 DateTimeUtil.isBetween(it.dateTime, start, end)
             }
 
-    private fun getWithFilter(id: Int, filter: (Meal) -> Boolean = { true }): Collection<Meal> =
+    private fun getWithFilter(id: Int, filter: (Meal) -> Boolean = { true }): List<Meal> =
             repository[id]?.let {
                 it.getCollection().filter(filter).sortedWith(compareBy { it.dateTime })
             } ?: listOf()

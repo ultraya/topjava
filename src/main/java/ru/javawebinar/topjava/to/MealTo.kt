@@ -4,7 +4,7 @@ import ru.javawebinar.topjava.model.Meal
 import java.time.LocalDateTime
 
 data class MealTo(
-        val id: Int,
+        val id: Int?,
         val dateTime: LocalDateTime,
         val description: String,
         val calories: Int,
@@ -18,5 +18,4 @@ data class MealTo(
                 calories = meal.calories
         )
     }
-
 }

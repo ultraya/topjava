@@ -12,6 +12,7 @@ import ru.javawebinar.topjava.util.singleResult
 import java.time.LocalDateTime
 import javax.annotation.PostConstruct
 
+//https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html#jdbc
 @Repository
 class JdbcMealRepository : MealRepository {
 
@@ -60,11 +61,11 @@ class JdbcMealRepository : MealRepository {
             jdbcTemplate.query("SELECT * FROM meals WHERE id = ? AND user_id = ?", ROW_MAPPER, mealId, userId)
                     .singleResult
 
-    override fun getAll(userId: Int): Collection<Meal> =
+    override fun getAll(userId: Int): List<Meal> =
             jdbcTemplate.query("SELECT * FROM meals WHERE user_id=? ORDER BY date_time DESC", ROW_MAPPER, userId)
 
 
-    override fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): Collection<Meal> =
+    override fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): List<Meal> =
             jdbcTemplate.query(
                     "SELECT * FROM meals WHERE user_id = ? AND date_time BETWEEN ? AND ? ORDER BY date_time DESC",
                     ROW_MAPPER,

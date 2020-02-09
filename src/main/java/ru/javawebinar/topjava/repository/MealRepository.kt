@@ -14,7 +14,7 @@ interface MealRepository {
     // null if not found
     fun get(userId: Int, mealId: Int): Meal?
 
-    fun getAll(userId: Int): Collection<Meal>
+    fun getAll(userId: Int): List<Meal>
 
-    fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): Collection<Meal>
+    fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): List<Meal>
 }

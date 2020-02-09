@@ -5,7 +5,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException
 
 object ValidationUtil {
     @JvmStatic
-    fun <T> checkNotFoundWithId(`object`: T?, id: Int): T {
+    fun <T> checkNotFoundWithId(`object`: T?, id: Int?): T {
         return checkNotFound(`object`, "id=$id")
     }
 
