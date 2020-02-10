@@ -24,11 +24,12 @@ import java.util.*
 @RunWith(SpringRunner::class)
 @Sql(scripts = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
 class UserServiceTest {
-    //    static {
-    //        // Only for postgres driver logging
-    //        // It uses java.util.logging and logged via jul-to-slf4j bridge
-    //        SLF4JBridgeHandler.install();
-    //    }
+    //replace to Configuration class https://stackoverflow.com/questions/27296276
+    //        init {
+    //            // let java.util.logging log to slf4j
+    //            SLF4JBridgeHandler.removeHandlersForRootLogger()
+    //            SLF4JBridgeHandler.install()
+    //        }
     @Autowired
     private lateinit var service: UserService
 

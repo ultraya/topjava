@@ -1,8 +1,15 @@
 package ru.javawebinar.topjava.service
 
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
+import org.junit.rules.Stopwatch
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 import org.junit.runner.RunWith
-import org.slf4j.bridge.SLF4JBridgeHandler
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.jdbc.Sql
@@ -14,6 +21,7 @@ import ru.javawebinar.topjava.config.DaoConfig
 import ru.javawebinar.topjava.util.exception.NotFoundException
 import java.time.LocalDate
 import java.time.Month
+import java.util.concurrent.TimeUnit
 
 //https://spring.io/blog/2011/06/21/spring-3-1-m2-testing-with-configuration-classes-and-profiles
 @RunWith(SpringRunner::class)
@@ -24,15 +32,60 @@ class MealServiceTest {
     @Autowired
     private lateinit var mealService: MealService
 
-    companion object {
-        //replace to Configuration class https://stackoverflow.com/questions/27296276
-//        init {
-//            // let java.util.logging log to slf4j
-//            SLF4JBridgeHandler.removeHandlersForRootLogger()
-//            SLF4JBridgeHandler.install()
-//        }
+    @Rule
+    @JvmField
+    val expectedException = ExpectedException.none()!!
 
-        val NOT_EXISTS_MEAL_ID = 10
+    @Rule
+    @JvmField
+    val watcher = object : TestWatcher() {
+
+        var start: Long = 0
+
+        override fun starting(description: Description?) {
+            start = System.nanoTime()
+        }
+
+        override fun finished(description: Description?) {
+            infoDuration[description!!.methodName] = System.nanoTime() - start
+        }
+    }
+
+    @Rule
+    @JvmField
+    val stopwatch = object : Stopwatch() {
+        override fun finished(nanos: Long, description: Description?) {
+            val s = String.format("\n%-25s %7d", description!!.methodName, TimeUnit.NANOSECONDS.toMillis(nanos))
+            result.append(s)
+            log.info(s)
+        }
+    }
+
+    companion object {
+
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        @JvmStatic
+        private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+
+        const val NOT_EXISTS_MEAL_ID = 10
+
+        val infoDuration = mutableMapOf<String, Long>()
+
+        val result = StringBuilder()
+
+        @BeforeClass
+        @JvmStatic
+        fun startTest() = println("TEST EXECUTING...")
+
+        @AfterClass
+        @JvmStatic
+        fun endTest() {
+            infoDuration.map {
+                "${it.key}: ${TimeUnit.NANOSECONDS.toMillis(it.value)}"
+            }.forEach {
+                log.info(it)
+            }
+        }
     }
 
     @Test
@@ -53,15 +106,17 @@ class MealServiceTest {
         }
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun updateNotFound() {
+        expectedNotFoundException("Not found entity with id=$NOT_EXISTS_MEAL_ID")
         with(mealService) {
             update(USER_ID, getUpdated().apply { id = NOT_EXISTS_MEAL_ID })
         }
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun updateNotOwn() {
+        expectedNotFoundException("Not found entity with id=$MEAL_ID1")
         with(mealService) {
             update(ADMIN_ID, getUpdated())
         }
@@ -75,13 +130,15 @@ class MealServiceTest {
         }
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun deleteNotFound() {
+        expectedNotFoundException("Not found entity with id=$NOT_EXISTS_MEAL_ID")
         mealService.delete(USER_ID, NOT_EXISTS_MEAL_ID)
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun deleteNotOwn() {
+        expectedNotFoundException("Not found entity with id=$MEAL_ID1")
         mealService.delete(ADMIN_ID, MEAL_ID1)
     }
 
@@ -93,13 +150,15 @@ class MealServiceTest {
         }
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun getNotFound() {
+        expectedNotFoundException("Not found entity with id=$NOT_EXISTS_MEAL_ID")
         mealService.get(USER_ID, NOT_EXISTS_MEAL_ID)
     }
 
-    @Test(expected = NotFoundException::class)
+    @Test
     fun getNotOwn() {
+        expectedNotFoundException("Not found entity with id=$MEAL_ID1")
         mealService.get(ADMIN_ID, MEAL_ID1)
     }
 
@@ -121,5 +180,10 @@ class MealServiceTest {
                 ),
                 MEAL6, MEAL5, MEAL4
         )
+    }
+
+    private fun expectedNotFoundException(msg: String) {
+        expectedException.expect(NotFoundException::class.java)
+        expectedException.expectMessage(msg)
     }
 }
