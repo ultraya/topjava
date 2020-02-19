@@ -74,8 +74,9 @@ class DaoConfig {
             setShowSql(showSql)
         }
         setJpaPropertyMap(mapOf(
-                AvailableSettings.FORMAT_SQL to formatSql
-               // , AvailableSettings.USE_SQL_COMMENTS to sqlComments
+                AvailableSettings.FORMAT_SQL to formatSql,
+                AvailableSettings.JPA_PROXY_COMPLIANCE to false
+                // , AvailableSettings.USE_SQL_COMMENTS to sqlComments
         )
         )
     }
