@@ -7,10 +7,4 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ComponentScan(basePackages = ["ru.javawebinar.**.service", "ru.javawebinar.**.web"])
-class CoreConfig {
-
-    @Bean
-    fun methodInvokingFactoryBean() = MethodInvokingFactoryBean().apply {
-        setStaticMethod("org.slf4j.bridge.SLF4JBridgeHandler.install")
-    }
-}
+class CoreConfig

@@ -11,6 +11,7 @@ import org.junit.runner.Description
 import org.junit.runner.RunWith
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit
 @RunWith(SpringRunner::class)
 @ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
 @Sql(value = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
+@ActiveProfiles("hsqldb")
 class MealServiceTest {
 
     @Autowired
