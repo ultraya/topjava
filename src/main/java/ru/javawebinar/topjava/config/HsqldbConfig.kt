@@ -9,10 +9,11 @@ import org.springframework.core.io.Resource
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.jdbc.datasource.init.DataSourceInitializer
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
+import ru.javawebinar.topjava.Profiles
 import javax.sql.DataSource
 
 @Configuration
-@Profile("hsqldb")
+@Profile(Profiles.HSQLDB)
 @PropertySource("classpath:db/hsqldb.properties")
 class HsqldbConfig : DSConfig {
 

@@ -11,10 +11,11 @@ import org.springframework.context.annotation.PropertySource
 import org.springframework.core.io.Resource
 import org.springframework.jdbc.datasource.init.DataSourceInitializer
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
+import ru.javawebinar.topjava.Profiles
 import javax.sql.DataSource
 
 @Configuration
-@Profile("postgres")
+@Profile(Profiles.POSTGRES)
 @PropertySource("classpath:db/postgres.properties")
 class PostgresConfig : DSConfig {
 

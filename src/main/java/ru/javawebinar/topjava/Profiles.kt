@@ -1,19 +1,31 @@
 package ru.javawebinar.topjava
 
-class Profiles{
+import org.slf4j.LoggerFactory
+
+class Profiles {
     companion object {
         const val POSTGRES = "postgres"
         const val HSQLDB = "hsqldb"
         const val REPOSITORY_IMPLEMENTATION = "JPA"
-    }
-    val activeProfile: String
-        get() {
-            try {
-                Class.forName("org.postgresql.Driver")
-                return POSTGRES
-            }catch (ex: ClassNotFoundException){
-                Class.forName("org.hsqldb.jdbcDriver")
-                return HSQLDB
+
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        @JvmStatic
+        private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+
+        val activeProfile: String
+            get() {
+                return try {
+                    Class.forName("org.postgresql.Driver")
+                    POSTGRES
+                } catch (ex: ClassNotFoundException) {
+                    try {
+                        Class.forName("org.hsqldb.jdbcDriver")
+                        HSQLDB
+                    } catch (ex: ClassNotFoundException) {
+                        log.info("Driver DB not found in classpath")
+                        throw ex
+                    }
+                }
             }
-        }
+    }
 }
