@@ -14,7 +14,7 @@ abstract class AbstractBaseEntity protected constructor(
         var id: Int?) {
 
     companion object {
-        const val START_SEQ = 100000
+        const val START_SEQ = 100000   //public static final
     }
 
     val isNew: Boolean
