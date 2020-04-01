@@ -6,6 +6,9 @@ class Profiles {
     companion object {
         const val POSTGRES = "postgres"
         const val HSQLDB = "hsqldb"
+        const val JDBC = "jdbc"
+        const val JPA = "jpa"
+        const val DATAJPA = "datajpa"
         const val REPOSITORY_IMPLEMENTATION = "JPA"
 
         @Suppress("JAVA_CLASS_ON_COMPANION")

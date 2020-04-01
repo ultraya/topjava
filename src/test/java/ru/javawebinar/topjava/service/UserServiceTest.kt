@@ -9,12 +9,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlConfig
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.transaction.annotation.Transactional
-import ru.javawebinar.topjava.ADMIN
-import ru.javawebinar.topjava.USER
-import ru.javawebinar.topjava.USER_ID
-import ru.javawebinar.topjava.assertMatch
-import ru.javawebinar.topjava.config.ActiveDbProfileResolver
+import ru.javawebinar.topjava.*
 import ru.javawebinar.topjava.config.CoreConfig
 import ru.javawebinar.topjava.config.DaoConfig
 import ru.javawebinar.topjava.model.Role
@@ -25,7 +20,8 @@ import java.util.*
 @ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
 @RunWith(SpringRunner::class)
 @Sql(scripts = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver::class)
+//@ActiveProfiles(resolver = ActiveDbProfileResolver::class)
+@ActiveProfiles(value = [Profiles.POSTGRES, Profiles.DATAJPA])
 class UserServiceTest {
     //replace to Configuration class https://stackoverflow.com/questions/27296276
     //        init {

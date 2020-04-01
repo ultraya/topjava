@@ -29,8 +29,9 @@ import java.util.concurrent.TimeUnit
 @RunWith(SpringRunner::class)
 @ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
 @Sql(value = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver::class)   //@ActiveProfiles(Profiles.HSQLDB)
-class MealServiceTest {
+//@ActiveProfiles(resolver = ActiveDbProfileResolver::class)   //@ActiveProfiles(Profiles.HSQLDB)
+@ActiveProfiles(value = [Profiles.POSTGRES, Profiles.DATAJPA])
+class MealServiceTest{
 
     @Autowired
     private lateinit var mealService: MealService

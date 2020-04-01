@@ -31,6 +31,7 @@ public class UserService {
         checkNotFoundWithId(repository.delete(id), id);
     }
 
+    @Cacheable(value = "user", key = "#id")
     public User get(int id) throws NotFoundException {
         return checkNotFoundWithId(repository.get(id), id);
     }
