@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava.service
 
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.CacheManager
 import org.springframework.dao.DataAccessException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -31,6 +33,15 @@ class UserServiceTest {
     //        }
     @Autowired
     private lateinit var service: UserService
+
+    @Autowired
+    private lateinit var cacheManager: CacheManager
+
+    @Before
+    fun setup() {
+        cacheManager.getCache("users")?.clear()
+        cacheManager.getCache("user")?.clear()
+    }
 
     @Test
     fun create() {
