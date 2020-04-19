@@ -56,4 +56,11 @@ class PostgresConfig : DSConfig {
     fun methodInvokingFactoryBean() = MethodInvokingFactoryBean().apply {
         setStaticMethod("org.slf4j.bridge.SLF4JBridgeHandler.install")
     }
+    ///   see method above
+    //replace to Configuration class https://stackoverflow.com/questions/27296276
+    //        init {
+    //            // let java.util.logging log to slf4j
+    //            SLF4JBridgeHandler.removeHandlersForRootLogger()
+    //            SLF4JBridgeHandler.install()
+    //        }
 }

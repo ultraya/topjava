@@ -36,4 +36,8 @@ class DataJpaUserRepository : UserRepository {
     override fun getAll(): List<User> {
         return crudRepository.findAll(SORT_NAME_EMAIL)
     }
+
+    override fun getWithMeals(id: Int): User? {
+        return crudRepository.getOneWithMeals(id).orElse(null)
+    }
 }

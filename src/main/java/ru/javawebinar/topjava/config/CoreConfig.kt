@@ -18,11 +18,15 @@ import org.springframework.core.io.ClassPathResource
 class CoreConfig {
 
     @Bean  // configure and return an implementation of Spring's CacheManager SPI
-    fun cacheManager(): JCacheCacheManager =
+    fun cacheManager(): CacheManager =
             JCacheCacheManager().apply {
-                cacheManager = JCacheManagerFactoryBean().apply {
-                    setCacheManagerUri(ClassPathResource("cache/ehcache.xml").uri)
-                }.`object`
+                cacheManager = jCacheManagerFactoryBean().`object`
+            }
+
+    @Bean // called afterPropertiesSet()
+    fun jCacheManagerFactoryBean() =
+            JCacheManagerFactoryBean().apply {
+                setCacheManagerUri(ClassPathResource("cache/ehcache.xml").uri)
             }
 }
 

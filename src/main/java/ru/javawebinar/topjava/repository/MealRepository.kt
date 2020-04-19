@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository
 
 import ru.javawebinar.topjava.model.Meal
+import java.lang.UnsupportedOperationException
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -17,4 +18,8 @@ interface MealRepository {
     fun getAll(userId: Int): List<Meal>
 
     fun getBetween(userId: Int, start: LocalDateTime, end: LocalDateTime): List<Meal>
+
+    fun getWithUser(userId: Int, mealId: Int): Meal? {
+        throw UnsupportedOperationException()
+    }
 }

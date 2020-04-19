@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository
 
 import ru.javawebinar.topjava.model.User
+import java.lang.UnsupportedOperationException
 
 interface UserRepository {
     // null if not found, when updated
@@ -16,4 +17,8 @@ interface UserRepository {
     fun getByEmail(email: String): User?
 
     fun getAll(): List<User>
+
+    fun getWithMeals(id: Int): User? {
+        throw UnsupportedOperationException()
+    }
 }

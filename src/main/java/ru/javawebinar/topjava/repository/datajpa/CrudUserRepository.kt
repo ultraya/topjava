@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.transaction.annotation.Transactional
 import ru.javawebinar.topjava.model.User
+import java.util.*
 
 @Transactional(readOnly = true)
 interface CrudUserRepository : JpaRepository<User, Int> {
@@ -16,4 +17,7 @@ interface CrudUserRepository : JpaRepository<User, Int> {
     fun delete(@Param("id") id: Int): Int
 
     fun getByEmail(email: String): User?
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u._meals m WHERE u.id =:id ORDER BY m.dateTime DESC")
+    fun getOneWithMeals(@Param("id") id: Int): Optional<User>
 }

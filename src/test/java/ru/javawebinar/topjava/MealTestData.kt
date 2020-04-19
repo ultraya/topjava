@@ -27,7 +27,7 @@ val MEAL5 = Meal(MEAL_ID1 + 4, LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "О
 val MEAL6 = Meal(MEAL_ID1 + 5, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 503)
 
 val USER_MEALS
-    get() = MEALS.sortedWith(compareBy { it.dateTime }).forEach { it.id = USER_ID }
+    get() = listOf(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1)
 
 fun getCreated() = Meal(
         LocalDateTime.of(2020, Month.JANUARY, 21, 0, 0),

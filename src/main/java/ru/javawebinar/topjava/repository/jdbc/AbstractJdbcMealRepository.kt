@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
-import org.springframework.stereotype.Repository
 import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.repository.MealRepository
 import ru.javawebinar.topjava.util.singleResult
@@ -13,11 +12,11 @@ import java.time.LocalDateTime
 import javax.annotation.PostConstruct
 
 //https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html#jdbc
-@Repository
-class JdbcMealRepository : MealRepository {
+abstract class AbstractJdbcMealRepository<T: Any> : MealRepository {
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
+
     @Autowired
     private lateinit var namedJdbcTemplate: NamedParameterJdbcTemplate
     private lateinit var simpleJdbcInsert: SimpleJdbcInsert
@@ -32,11 +31,13 @@ class JdbcMealRepository : MealRepository {
                 .usingGeneratedKeyColumns("id")
     }
 
+    abstract fun convertDate(dateTime: LocalDateTime): T
+
     override fun save(userId: Int, meal: Meal): Meal? {
         val params = mapOf(
                 "id" to meal.id,
                 "user_id" to userId,
-                "date_time" to meal.dateTime,
+                "date_time" to convertDate(meal.dateTime),
                 "description" to meal.description,
                 "calories" to meal.calories
         )
@@ -70,7 +71,7 @@ class JdbcMealRepository : MealRepository {
                     "SELECT * FROM meals WHERE user_id = ? AND date_time BETWEEN ? AND ? ORDER BY date_time DESC",
                     ROW_MAPPER,
                     userId,
-                    start,
-                    end
+                    convertDate(start),
+                    convertDate(end)
             )
 }

@@ -56,6 +56,15 @@ class User(
     constructor(id: Int?, name: String, email: String, password: String, role: Role, vararg roles: Role) :
             this(id, name, email, password, roles = EnumSet.of(role, *roles))
 
+
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    private var _meals = mutableListOf<Meal>()
+
+    val meals
+        get() = _meals.toList()
+
+    fun addMeal(meal: Meal) = _meals.add(meal)
+
     override fun toString(): String {
         return "User(id='$id', name='$name', email='$email', password='$password', caloriesPerDay=$caloriesPerDay, enabled=$enabled, registered=$registered, roles=$roles)"
     }

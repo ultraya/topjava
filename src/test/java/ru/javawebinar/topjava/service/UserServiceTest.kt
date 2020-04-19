@@ -2,40 +2,21 @@ package ru.javawebinar.topjava.service
 
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.CacheManager
 import org.springframework.dao.DataAccessException
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.jdbc.SqlConfig
-import org.springframework.test.context.junit4.SpringRunner
-import ru.javawebinar.topjava.*
-import ru.javawebinar.topjava.config.CoreConfig
-import ru.javawebinar.topjava.config.DaoConfig
+import ru.javawebinar.topjava.ADMIN
+import ru.javawebinar.topjava.USER
+import ru.javawebinar.topjava.USER_ID
+import ru.javawebinar.topjava.assertMatch
 import ru.javawebinar.topjava.model.Role
 import ru.javawebinar.topjava.model.User
 import ru.javawebinar.topjava.util.exception.NotFoundException
 import java.util.*
 
-@ContextConfiguration(classes = [CoreConfig::class, DaoConfig::class])
-@RunWith(SpringRunner::class)
-@Sql(scripts = ["classpath:db/populateDB.sql"], config = SqlConfig(encoding = "UTF-8"))
-//@ActiveProfiles(resolver = ActiveDbProfileResolver::class)
-@ActiveProfiles(value = [Profiles.POSTGRES, Profiles.DATAJPA])
-class UserServiceTest {
-    //replace to Configuration class https://stackoverflow.com/questions/27296276
-    //        init {
-    //            // let java.util.logging log to slf4j
-    //            SLF4JBridgeHandler.removeHandlersForRootLogger()
-    //            SLF4JBridgeHandler.install()
-    //        }
-    @Autowired
-    private lateinit var service: UserService
+abstract class UserServiceTest : AbstractServiceTest() {
 
     @Autowired
-    private lateinit var cacheManager: CacheManager
+    protected lateinit var service: UserService
 
     @Before
     fun setup() {

@@ -18,6 +18,6 @@ fun assertMatch(iterable: Iterable<User>, user: User, vararg users: User) {
 }
 
 fun assertMatch(actual: User, expected: User) {
-    assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles")
+    assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles", "_meals")
 }
 

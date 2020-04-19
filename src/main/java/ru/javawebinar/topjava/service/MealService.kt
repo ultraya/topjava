@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.service
 import org.springframework.stereotype.Service
 import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.repository.MealRepository
-import ru.javawebinar.topjava.util.DateTimeUtil
 import ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId
 import ru.javawebinar.topjava.util.exception.NotFoundException
 import java.time.LocalDate
@@ -29,4 +28,7 @@ class MealService(
 
     fun getFilteredByDate(userId: Int, start: LocalDate, end: LocalDate) =
             repository.getBetween(userId, LocalDateTime.of(start, LocalTime.MIN), LocalDateTime.of(end, LocalTime.MAX))
+
+    @Throws(NotFoundException::class)
+    fun getWithUser(userId: Int, mealId: Int) = checkNotFoundWithId(repository.getWithUser(userId, mealId), mealId)
 }
