@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa
 
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -18,6 +19,8 @@ interface CrudUserRepository : JpaRepository<User, Int> {
 
     fun getByEmail(email: String): User?
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u._meals m WHERE u.id =:id ORDER BY m.dateTime DESC")
+    //@Query("SELECT u FROM User u LEFT JOIN FETCH u._meals m WHERE u.id =:id ORDER BY m.dateTime DESC")
+    @EntityGraph(attributePaths = ["roles", "_meals"])
+    @Query("SELECT u FROM User u WHERE u.id = :id")
     fun getOneWithMeals(@Param("id") id: Int): Optional<User>
 }

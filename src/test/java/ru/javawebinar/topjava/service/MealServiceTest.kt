@@ -1,11 +1,15 @@
 package ru.javawebinar.topjava.service
 
+import org.junit.Assume
 import org.junit.Test
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import ru.javawebinar.topjava.*
+import ru.javawebinar.topjava.model.Meal
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
+import javax.validation.ConstraintViolationException
+
 
 abstract class MealServiceTest : AbstractServiceTest() {
 
@@ -13,11 +17,6 @@ abstract class MealServiceTest : AbstractServiceTest() {
     protected lateinit var mealService: MealService
 
     companion object {
-
-        @Suppress("JAVA_CLASS_ON_COMPANION")
-        @JvmStatic
-        private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
-
         const val NOT_EXISTS_MEAL_ID = 10
     }
 
@@ -26,7 +25,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
         val newMeal = getCreated()
         with(mealService) {
             newMeal.id = create(USER_ID, newMeal)?.id
-            assertMatch(getAll(USER_ID), newMeal, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1)
+            MEAL_MATCHER.assertMatch(getAll(USER_ID), newMeal, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1)
         }
     }
 
@@ -35,7 +34,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
         val updatedMeal = getUpdated()
         with(mealService) {
             update(USER_ID, updatedMeal)
-            assertMatch(get(USER_ID, MEAL_ID1), updatedMeal)
+            MEAL_MATCHER.assertMatch(get(USER_ID, MEAL_ID1), updatedMeal)
         }
     }
 
@@ -59,7 +58,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
     fun delete() {
         with(mealService) {
             delete(USER_ID, MEAL_ID1)
-            assertMatch(getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2)
+            MEAL_MATCHER.assertMatch(getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2)
         }
     }
 
@@ -79,7 +78,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
     fun get() {
         with(mealService) {
             val meal = get(USER_ID, MEAL_ID1)
-            assertMatch(meal, MEAL1)
+            MEAL_MATCHER.assertMatch(meal, MEAL1)
         }
     }
 
@@ -97,7 +96,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
 
     @Test
     fun getAll() {
-        assertMatch(
+        MEAL_MATCHER.assertMatch(
                 mealService.getAll(USER_ID),
                 MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1
         )
@@ -105,7 +104,7 @@ abstract class MealServiceTest : AbstractServiceTest() {
 
     @Test
     fun getBetweenDate() {
-        assertMatch(
+        MEAL_MATCHER.assertMatch(
                 mealService.getFilteredByDate(
                         USER_ID,
                         LocalDate.of(2015, Month.MAY, 31),
@@ -113,5 +112,23 @@ abstract class MealServiceTest : AbstractServiceTest() {
                 ),
                 MEAL6, MEAL5, MEAL4
         )
+    }
+
+    @Test
+    fun createWithException() {
+        Assume.assumeFalse(env.activeProfiles.contains("jdbc"))
+
+        with(mealService) {
+            validateRootCase(ConstraintViolationException::class.java) {
+                create(USER_ID, Meal(null, LocalDateTime.now(), "  ", 300))
+            }
+            validateRootCase(ConstraintViolationException::class.java) {
+                create(USER_ID, Meal(null, LocalDateTime.now(), "Description", 9))
+            }
+            validateRootCase(ConstraintViolationException::class.java) {
+                create(USER_ID, Meal(null, LocalDateTime.now(), "Description", 5001))
+            }
+        }
+
     }
 }

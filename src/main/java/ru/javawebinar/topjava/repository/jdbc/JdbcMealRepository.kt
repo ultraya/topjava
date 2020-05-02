@@ -1,18 +1,22 @@
 package ru.javawebinar.topjava.repository.jdbc
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
+import org.springframework.stereotype.Repository
+import ru.javawebinar.topjava.Profiles
 import ru.javawebinar.topjava.model.Meal
 import ru.javawebinar.topjava.repository.MealRepository
 import ru.javawebinar.topjava.util.singleResult
+import java.sql.Timestamp
 import java.time.LocalDateTime
 import javax.annotation.PostConstruct
 
 //https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html#jdbc
-abstract class AbstractJdbcMealRepository<T: Any> : MealRepository {
+abstract class JdbcMealRepository<T: Any> : MealRepository {
 
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
@@ -29,6 +33,26 @@ abstract class AbstractJdbcMealRepository<T: Any> : MealRepository {
         simpleJdbcInsert = SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id")
+    }
+
+    /*
+    can be fix update hsqldb version, this only for example
+     */
+
+    @Profile(Profiles.HSQLDB)
+    @Repository
+    class JdbcHsqldbMealRepository : JdbcMealRepository<Timestamp>() {
+        override fun convertDate(dateTime: LocalDateTime): Timestamp {
+            return Timestamp.valueOf(dateTime)
+        }
+    }
+
+    @Profile(Profiles.POSTGRES)
+    @Repository
+    class JdbcPostgresMealRepository : JdbcMealRepository<LocalDateTime>() {
+        override fun convertDate(dateTime: LocalDateTime): LocalDateTime {
+            return dateTime
+        }
     }
 
     abstract fun convertDate(dateTime: LocalDateTime): T

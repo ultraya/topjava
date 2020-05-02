@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
@@ -27,21 +29,13 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
     private MealRestController mealController;
-    private ConfigurableApplicationContext appCtx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        appCtx = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, false);
-        appCtx.getEnvironment().setActiveProfiles(Profiles.POSTGRES);
-        appCtx.refresh();
+        WebApplicationContext appCtx =
+                WebApplicationContextUtils.getRequiredWebApplicationContext(config.getServletContext());
         mealController = appCtx.getBean(MealRestController.class);
-    }
-
-    @Override
-    public void destroy() {
-        appCtx.close();
-        super.destroy();
     }
 
     @Override

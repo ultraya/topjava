@@ -36,15 +36,3 @@ fun getCreated() = Meal(
 )
 
 fun getUpdated() = Meal(MEAL_ID1, MEAL1.dateTime, "updated", 200)
-
-fun assertMatch(actual: Meal, expected: Meal) {
-    Assertions.assertThat(actual).isEqualToIgnoringGivenFields(expected,"user")
-}
-
-fun assertMatch(actual: Iterable<Meal>, meal: Meal, vararg meals: Meal) {
-    assertMatch(actual, listOf(meal, *meals))
-}
-
-fun assertMatch(actual: Iterable<Meal>, expected: Iterable<Meal>) {
-    Assertions.assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected)
-}

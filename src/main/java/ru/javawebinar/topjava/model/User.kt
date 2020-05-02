@@ -1,9 +1,16 @@
 package ru.javawebinar.topjava.model
 
+import org.hibernate.annotations.BatchSize
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
+import org.hibernate.validator.constraints.Range
 import ru.javawebinar.topjava.util.MealsUtil
 import java.util.*
 import javax.persistence.*
-import javax.validation.constraints.*
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 //https://stackoverflow.com/questions/45642181/kotlin-jpa-encapsulate-onetomany
 @Entity
@@ -13,38 +20,41 @@ import javax.validation.constraints.*
         NamedQuery(name = BY_EMAIL_USER, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email = :email"),
         NamedQuery(name = ALL_SORTED_USERS, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles ORDER BY u.name, u.email")
 )
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class User(
         id: Int? = null,
         name: String,
 
-        @Email
-        @NotBlank
-        @Size(max = 100)
+        @field:Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
+        @field:NotBlank
+        @field:Size(max = 100)
         @Column(name = "email", nullable = false, unique = true)
         var email: String,
 
-        @NotBlank
-        @Size(min = 5)
+        @field:NotBlank
+        @field:Size(min = 5)
         @Column(name = "password", nullable = false)
         var password: String,
 
-        @NotNull
-        @PositiveOrZero
+        @field:NotNull
+        @field:Range(min = 10, max = 10000)
         @Column(name = "calories_per_day", nullable = false)
         var caloriesPerDay: Int = MealsUtil.DEFAULT_CALORIES_PER_DAY,
 
-        @NotNull
+        @field:NotNull
         @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
-        var enabled: Boolean = true,
+        var enabled: Boolean? = true,
 
-        @NotNull
+        @field:NotNull
         @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
-        var registered: Date = Date(),
+        var registered: Date? = Date(),
 
         @Enumerated(EnumType.STRING)
         @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
         @Column(name = "role")
-        @ElementCollection(fetch = FetchType.LAZY)
+        @ElementCollection(fetch = FetchType.EAGER)
+        @BatchSize(size = 200)
+        @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
         var roles: MutableSet<Role> = EnumSet.noneOf(Role::class.java)
 
 ) : AbstractNamedEntity(id, name) {
@@ -58,6 +68,7 @@ class User(
 
 
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    @OrderBy("dateTime DESC")
     private var _meals = mutableListOf<Meal>()
 
     val meals

@@ -1,12 +1,14 @@
 package ru.javawebinar.topjava.model
 
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
+import org.hibernate.validator.constraints.Range
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
-import javax.validation.constraints.PositiveOrZero
 import javax.validation.constraints.Size
 
 @Entity
@@ -18,17 +20,17 @@ import javax.validation.constraints.Size
 )
 class Meal(
         id: Int? = null,
-        @NotNull
-        @Column(name = "date_time", nullable = false, columnDefinition = "timestamp default now()")
+        @field:NotNull  //https://stackoverflow.com/questions/36515094/kotlin-and-valid-spring-annotation
+        @field:Column(name = "date_time", nullable = false, columnDefinition = "timestamp default now()")
         var dateTime: LocalDateTime,
 
-        @NotBlank
-        @Size(max = 255)
+        @field:NotBlank
+        @field:Size(max = 255)
         @Column(name = "description", nullable = false)
         var description: String,
 
-        @NotNull
-        @PositiveOrZero
+        @field:NotNull
+        @field:Range(min = 10, max = 5000)
         @Column(name = "calories", nullable = false)
         var calories: Int
 
@@ -42,6 +44,7 @@ class Meal(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")  //(Optional) The name of the foreign key column.
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var user: User? = null
 
     val date: LocalDate

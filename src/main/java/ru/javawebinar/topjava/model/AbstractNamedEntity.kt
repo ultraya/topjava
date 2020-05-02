@@ -8,8 +8,8 @@ import javax.validation.constraints.Size
 @MappedSuperclass
 abstract class AbstractNamedEntity protected constructor(
         id: Int?,
-        @NotBlank
-        @Size(min = 2, max = 100)
+        @field:NotBlank
+        @field:Size(min = 2, max = 100)
         @Column(name = "name", nullable = false)
         var name: String
 ) : AbstractBaseEntity(id) {

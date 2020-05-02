@@ -38,4 +38,16 @@ object ValidationUtil {
             entity.id = id
         } else require(entity.id == id) { "$entity must be with id=$id" }
     }
+
+    //  http://stackoverflow.com/a/28565320/548473
+    @JvmStatic
+    fun getRootCause(t: Throwable): Throwable {
+        var result = t
+        var cause: Throwable?
+
+        while (null != result.cause.also { cause = it } && result !== cause) {
+            result = cause!!
+        }
+        return result
+    }
 }

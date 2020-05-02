@@ -27,6 +27,8 @@ class PostgresConfig : DSConfig {
     lateinit var password: String
     @Value("classpath:db/initDB_postgres.sql")
     lateinit var initDb: Resource
+    @Value("classpath:db/populateDB.sql")
+    lateinit var populateDb: Resource
 
     @Bean
     override fun dataSource(): DataSource = HikariDataSource(HikariConfig().also {
@@ -42,7 +44,7 @@ class PostgresConfig : DSConfig {
         setEnabled(true)
         setDatabasePopulator(
                 ResourceDatabasePopulator().apply {
-                    addScript(initDb)
+                    addScripts(initDb, populateDb)
 //                    addScripts(
 //                            ClassPathResource("/db/initDB_postgres.sql")
 //                            ClassPathResource("/db/populateDB.sql")

@@ -13,8 +13,8 @@ import org.springframework.core.io.ClassPathResource
 
 
 @Configuration
-@ComponentScan(basePackages = ["ru.javawebinar.**.service", "ru.javawebinar.**.web"])
 @EnableCaching
+@ComponentScan(basePackages = ["ru.javawebinar.**.service"])
 class CoreConfig {
 
     @Bean  // configure and return an implementation of Spring's CacheManager SPI
